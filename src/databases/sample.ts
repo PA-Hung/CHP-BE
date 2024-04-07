@@ -263,7 +263,7 @@ export const INIT_PERMISSIONS = [
 
     {
         "_id": "660cf3270158ef1253845187",
-        "name": "Fetch accommodation",
+        "name": "ũem lưu trú",
         "apiPath": "/api/v1/accommodation",
         "method": "GET",
         "module": "ACCOMMODATION",
@@ -279,7 +279,7 @@ export const INIT_PERMISSIONS = [
     },
     {
         "_id": "660cf55f0158ef1253845208",
-        "name": "Create Accommodation",
+        "name": "Tạo lưu trú",
         "apiPath": "/api/v1/accommodation",
         "method": "POST",
         "module": "ACCOMMODATION",
@@ -295,7 +295,7 @@ export const INIT_PERMISSIONS = [
     },
     {
         "_id": "660cf5930158ef125384520d",
-        "name": "Detele Accommodation",
+        "name": "Xoá lưu trú",
         "apiPath": "/api/v1/accommodation/:id",
         "method": "DELETE",
         "module": "ACCOMMODATION",
@@ -311,7 +311,7 @@ export const INIT_PERMISSIONS = [
     },
     {
         "_id": "660cf9150158ef12538453a6",
-        "name": "Update Accomodation",
+        "name": "Cập nhật lưu trú",
         "apiPath": "/api/v1/accommodation/:id",
         "method": "PATCH",
         "module": "ACCOMMODATION",

@@ -28,13 +28,13 @@ export class ApartmentController {
     return this.apartmentService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateApartmentDto: UpdateApartmentDto) {
-    return this.apartmentService.update(+id, updateApartmentDto);
+  @Patch()
+  update(@Body() updateApartmentDto: UpdateApartmentDto) {
+    return this.apartmentService.update(updateApartmentDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.apartmentService.remove(+id);
+    return this.apartmentService.remove(id);
   }
 }

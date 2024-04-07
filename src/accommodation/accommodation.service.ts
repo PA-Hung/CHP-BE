@@ -76,7 +76,7 @@ export class AccommodationService {
 
     // Kiểm tra xem có trường apartment trong filter không
     if (filter.apartment) {
-      //console.log('filter.userId', filter.userId);
+      //console.log('filter.apartment', filter.apartment);
 
       //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
       filter.apartment = String(filter.apartment).replace(/^\/|\/i$/g, '');
@@ -158,16 +158,10 @@ export class AccommodationService {
     return updated
   }
 
-  async remove(id: string, userAuthInfo: IUser) {
+  async remove(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return "Lưu trú không tồn tại !"
     }
-    await this.accommodationModel.updateOne({ _id: id }, {
-      deletedBy: {
-        _id: userAuthInfo._id,
-        phone: userAuthInfo.phone
-      }
-    });
     return this.accommodationModel.deleteOne({ _id: id })
   }
 }

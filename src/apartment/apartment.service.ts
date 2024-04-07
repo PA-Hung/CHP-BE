@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateApartmentDto } from './dto/create-apartment.dto';
 import { UpdateApartmentDto } from './dto/update-apartment.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -6,6 +6,8 @@ import { Apartment, ApartmentDocument } from './schemas/apartment.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
+import { Accommodation, AccommodationDocument } from 'src/accommodation/schemas/accommodation.schema';
 
 @Injectable()
 export class ApartmentService {
@@ -13,6 +15,8 @@ export class ApartmentService {
   constructor(
     @InjectModel(Apartment.name)
     private apartmentModel: SoftDeleteModel<ApartmentDocument>,
+    @InjectModel(Accommodation.name)
+    private accommodationModel: SoftDeleteModel<AccommodationDocument>,
   ) { }
 
   async create(createApartmentDto: CreateApartmentDto, userInfo: IUser) {
@@ -57,11 +61,24 @@ export class ApartmentService {
     return `This action returns a #${id} apartment`;
   }
 
-  update(id: number, updateApartmentDto: UpdateApartmentDto) {
-    return `This action updates a #${id} apartment`;
+  async update(updateApartmentDto: UpdateApartmentDto) {
+    if (!mongoose.Types.ObjectId.isValid(updateApartmentDto._id)) {
+      throw new BadRequestException('not found apartment !')
+    }
+    return await this.apartmentModel.updateOne({ _id: updateApartmentDto._id }, {
+      ...updateApartmentDto,
+    })
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} apartment`;
+  async remove(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return "Căn hộ không tồn tại !"
+    }
+    const checkAparment = await this.accommodationModel.find({ apartment: id })
+
+    if (checkAparment.length !== 0) {
+      throw new BadRequestException(`Mã căn hộ này đã được sử dụng !`);
+    }
+    return this.apartmentModel.deleteOne({ _id: id })
   }
 }

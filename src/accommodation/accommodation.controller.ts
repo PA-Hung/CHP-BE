@@ -34,7 +34,7 @@ export class AccommodationController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @ReqUser() userAuthInfo: IUser) {
-    return this.accommodationService.remove(id, userAuthInfo);
+  remove(@Param('id') id: string) {
+    return this.accommodationService.remove(id);
   }
 }

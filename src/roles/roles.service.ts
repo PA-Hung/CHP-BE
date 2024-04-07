@@ -7,14 +7,17 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { Role, RoleDocument } from './schemas/role.schema';
 import mongoose from 'mongoose';
 import aqp from 'api-query-params';
-import { ADMIN_ROLE } from 'src/databases/sample';
+import { ADMIN_ROLE, USER_ROLE } from 'src/databases/sample';
+import { User, UserDocument } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class RolesService {
 
   constructor(
     @InjectModel(Role.name)
-    private roleModel: SoftDeleteModel<RoleDocument>
+    private roleModel: SoftDeleteModel<RoleDocument>,
+    @InjectModel(User.name)
+    private userModel: SoftDeleteModel<UserDocument>,
   ) { }
 
   async create(createRoleDto: CreateRoleDto, userInfo: IUser) {
@@ -95,15 +98,18 @@ export class RolesService {
     const checkRole = await this.roleModel.findOne({ _id: id })
     if (checkRole.name === ADMIN_ROLE) {
       throw new BadRequestException(
-        `Bạn không được xoá role admin !`
+        `Bạn không được xoá quyền admin mặc định !`
       );
     }
-    await this.roleModel.updateOne({ _id: id }, {
-      deletedBy: {
-        _id: userInfo._id,
-        phone: userInfo.phone
-      }
-    });
+    if (checkRole.name === USER_ROLE) {
+      throw new BadRequestException(
+        `Bạn không được xoá quyền user mặc định !`
+      );
+    }
+    const checkUserRole = await this.userModel.find({ role: id })
+    if (checkUserRole.length !== 0) {
+      throw new BadRequestException(`Quyền này đã được cấp cho người dùng !`);
+    }
     return this.roleModel.deleteOne({ _id: id })
   }
 

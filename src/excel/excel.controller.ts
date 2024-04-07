@@ -19,8 +19,12 @@ export class ExcelController {
   }
 
   @Get('export')
-  exportExcel(@ReqUser() userInfo: IUser) {
-    return this.excelService.exportExcel(userInfo);
+  exportExcel(
+    @Query('current') currentPage: string,
+    @Query('pageSize') limit: string,
+    @Query() queryString: string,
+    @ReqUser() userInfo: IUser) {
+    return this.excelService.exportExcel(+currentPage, +limit, queryString, userInfo);
   }
 
   @Get()

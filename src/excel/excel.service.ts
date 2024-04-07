@@ -10,6 +10,7 @@ import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import { ADMIN_ROLE } from 'src/databases/sample';
 import { ObjectId } from 'mongodb';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class ExcelService {
@@ -77,27 +78,59 @@ export class ExcelService {
     }
   }
 
-  async exportExcel(userInfo: IUser) {
+  async exportExcel(currentPage: number, limit: number, queryString: string, userInfo: IUser) {
     try {
-      // lọc dữ liệu export file, nếu là admin thì export tất cả, nếu là user thì chỉ export
-      // dữ liệu theo user id
-      const checkAdmin = userInfo.role
-      const userIdToSearch = checkAdmin.name !== ADMIN_ROLE ? userInfo._id : undefined;
 
-      let query = {};
-      if (userIdToSearch !== undefined) {
-        query = { userId: userIdToSearch };
+      const { filter, projection, sort, population } = aqp(queryString);
+
+      // Kiểm tra xem có trường userId trong filter không
+      if (filter.userId) {
+        //console.log('filter.userId', filter.userId);
+
+        //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
+        filter.userId = String(filter.userId).replace(/^\/|\/i$/g, '');
+
+        // Chuyển đổi thành ObjectId nếu giá trị là một chuỗi ObjectId hợp lệ
+        if (Types.ObjectId.isValid(filter.userId)) {
+          filter.userId = new Types.ObjectId(filter.userId);
+        }
       }
-      const accommodations = await this.AccommodationModel.find(query).exec();
+
+      // Kiểm tra xem có trường apartment trong filter không
+      if (filter.apartment) {
+        //console.log('filter.userId', filter.userId);
+
+        //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
+        filter.apartment = String(filter.apartment).replace(/^\/|\/i$/g, '');
+
+        // Chuyển đổi thành ObjectId nếu giá trị là một chuỗi ObjectId hợp lệ
+        if (Types.ObjectId.isValid(filter.apartment)) {
+          filter.apartment = new Types.ObjectId(filter.apartment);
+        }
+      }
+
+      delete filter.current
+      delete filter.pageSize
+      let offset = (+currentPage - 1) * (+limit);
+      let defaultLimit = +limit ? +limit : 10;
+      const totalItems = (await this.AccommodationModel.find(filter)).length;
+      const totalPages = Math.ceil(totalItems / defaultLimit);
+
+      const result = await this.AccommodationModel.find(filter)
+        .skip(offset)
+        .limit(defaultLimit)
+        .sort(sort as any)
+        .populate({ path: "apartment", select: { _id: 1, code: 1 } })
+        .select('')
+        .exec();
 
       // chuyển định dạng ngày tháng năm chuẩn ISO8601 thành DD/MM/YYY
       const formatDate = (date: Date) => {
         return dayjs(date).format('DD/MM/YYYY');
       }
-
       let stt = 1; // Biến đếm số thứ tự
       // Prepare worksheet data, handling dates appropriately
-      const worksheetData = accommodations.map((accommodation) => ({
+      const worksheetData = result.map((accommodation) => ({
         'STT': stt++,
         'Họ và tên (*)': accommodation.name,
         'Ngày, tháng, năm sinh (*)': formatDate(accommodation.birthday),
@@ -119,7 +152,7 @@ export class ExcelService {
         'Thời gian lưu trú (đến ngày) (*)': formatDate(accommodation.arrival),
         'Thời gian lưu trú (đi ngày)': accommodation.departure ? formatDate(accommodation.departure) : '',
         'Lý do lưu trú': accommodation.reason,
-        'Số phòng/Mã căn hộ': accommodation.apartment,
+        'Số phòng/Mã căn hộ': (accommodation.apartment as any)?.code ?? '',
         // Add other fields as needed
       }));
 
