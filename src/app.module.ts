@@ -12,6 +12,7 @@ import { AccommodationModule } from './accommodation/accommodation.module';
 import { ExcelModule } from './excel/excel.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
+import { ApartmentModule } from './apartment/apartment.module';
 
 
 @Module({
@@ -38,6 +39,7 @@ import { RolesModule } from './roles/roles.module';
     ExcelModule,
     PermissionsModule,
     RolesModule,
+    ApartmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

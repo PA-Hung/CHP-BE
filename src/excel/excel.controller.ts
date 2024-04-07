@@ -11,8 +11,11 @@ export class ExcelController {
 
   @Post('import')
   @UseInterceptors(FileInterceptor('fileExcel'))
-  importExcel(@UploadedFile() file: Express.Multer.File, @ReqUser() userInfo: IUser) {
-    return this.excelService.importExcel(file, userInfo);
+  importExcel(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('apartmentId') apartmentId: string,
+    @ReqUser() userInfo: IUser) {
+    return this.excelService.importExcel(file, apartmentId, userInfo);
   }
 
   @Get('export')

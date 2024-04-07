@@ -36,7 +36,6 @@ export class RolesService {
     return {
       _id: res._id,
       createdAt: res.createdAt
-
     }
   }
 

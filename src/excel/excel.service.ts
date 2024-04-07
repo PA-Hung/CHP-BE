@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import { ADMIN_ROLE } from 'src/databases/sample';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class ExcelService {
@@ -18,8 +19,9 @@ export class ExcelService {
     private AccommodationModel: SoftDeleteModel<AccommodationDocument>,
   ) { }
 
-  async importExcel(file: Express.Multer.File, userInfo: IUser) {
+  async importExcel(file: Express.Multer.File, apartmentId: string, userInfo: IUser) {
     try {
+      const apartmentObjectId = new ObjectId(apartmentId);
       // chuyen string ngay thang khong dung chuẩn về đúng chuẩn ISO8601 và convert thanh kieu Date đưa vào db
       const convertToISO8601Date = (inputDate: string): dayjs.Dayjs | null => {
         const [day, month, year] = inputDate.split('/');
@@ -63,7 +65,7 @@ export class ExcelService {
           arrival: convertToISO8601Date(item['Thời gian lưu trú (đến ngày) (*)']) || null,
           departure: convertToISO8601Date(item['Thời gian lưu trú (đi ngày)']) || null,
           reason: item['Lý do lưu trú'] || '',
-          apartment: item['Số phòng/Mã căn hộ'] || '',
+          apartment: apartmentObjectId,
         }));
 
         // Process the 'mappedData' array as needed

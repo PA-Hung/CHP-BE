@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Apartment } from 'src/apartment/schemas/apartment.schema';
 
 export type AccommodationDocument = HydratedDocument<Accommodation>;
 
@@ -47,8 +48,8 @@ export class Accommodation {
     departure: Date
     @Prop()
     reason: string
-    @Prop()
-    apartment: string
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Apartment.name })
+    apartment: mongoose.Schema.Types.ObjectId;
 
     @Prop({ type: Object })
     createdBy: {

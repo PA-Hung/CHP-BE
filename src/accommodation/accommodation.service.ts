@@ -74,6 +74,19 @@ export class AccommodationService {
       }
     }
 
+    // Kiểm tra xem có trường apartment trong filter không
+    if (filter.apartment) {
+      //console.log('filter.userId', filter.userId);
+
+      //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
+      filter.apartment = String(filter.apartment).replace(/^\/|\/i$/g, '');
+
+      // Chuyển đổi thành ObjectId nếu giá trị là một chuỗi ObjectId hợp lệ
+      if (Types.ObjectId.isValid(filter.apartment)) {
+        filter.apartment = new Types.ObjectId(filter.apartment);
+      }
+    }
+
     delete filter.current
     delete filter.pageSize
     let offset = (+currentPage - 1) * (+limit);
@@ -84,7 +97,7 @@ export class AccommodationService {
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
-      .populate(population)
+      .populate({ path: "apartment", select: { _id: 1, code: 1 } })
       .select('')
       .exec();
     return {
