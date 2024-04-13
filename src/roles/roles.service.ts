@@ -108,7 +108,7 @@ export class RolesService {
     }
     const checkUserRole = await this.userModel.find({ role: id })
     if (checkUserRole.length !== 0) {
-      throw new BadRequestException(`Quyền này đã được cấp cho người dùng !`);
+      throw new BadRequestException(`Chức danh này đã cấp cho người dùng !`);
     }
     return this.roleModel.deleteOne({ _id: id })
   }

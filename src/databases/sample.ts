@@ -263,7 +263,7 @@ export const INIT_PERMISSIONS = [
 
     {
         "_id": "660cf3270158ef1253845187",
-        "name": "ũem lưu trú",
+        "name": "Xem lưu trú",
         "apiPath": "/api/v1/accommodation",
         "method": "GET",
         "module": "ACCOMMODATION",

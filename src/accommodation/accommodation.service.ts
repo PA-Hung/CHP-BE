@@ -63,11 +63,8 @@ export class AccommodationService {
 
     // Kiểm tra xem có trường userId trong filter không
     if (filter.userId) {
-      //console.log('filter.userId', filter.userId);
-
       //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
       filter.userId = String(filter.userId).replace(/^\/|\/i$/g, '');
-
       // Chuyển đổi thành ObjectId nếu giá trị là một chuỗi ObjectId hợp lệ
       if (Types.ObjectId.isValid(filter.userId)) {
         filter.userId = new Types.ObjectId(filter.userId);
@@ -76,16 +73,64 @@ export class AccommodationService {
 
     // Kiểm tra xem có trường apartment trong filter không
     if (filter.apartment) {
-      //console.log('filter.apartment', filter.apartment);
-
       //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
       filter.apartment = String(filter.apartment).replace(/^\/|\/i$/g, '');
-
       // Chuyển đổi thành ObjectId nếu giá trị là một chuỗi ObjectId hợp lệ
       if (Types.ObjectId.isValid(filter.apartment)) {
         filter.apartment = new Types.ObjectId(filter.apartment);
       }
     }
+
+    if (filter.arrival) {
+      //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
+      filter.arrival = String(filter.arrival).replace(/^\/|\/i$/g, '');
+      // Chuyển đổi thành ObjectId nếu giá trị là một chuỗi ObjectId hợp lệ
+      if (dayjs(filter.arrival).isValid()) {
+        filter.arrival = { $gte: dayjs(filter.arrival).startOf('day').toDate(), $lte: dayjs(filter.arrival).endOf('day').toDate() }
+      }
+    }
+
+    if (filter.departure) {
+      //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
+      filter.departure = String(filter.departure).replace(/^\/|\/i$/g, '');
+      // Chuyển đổi thành ObjectId nếu giá trị là một chuỗi ObjectId hợp lệ
+      if (dayjs(filter.departure).isValid()) {
+        filter.departure = { $gte: dayjs(filter.departure).startOf('day').toDate(), $lte: dayjs(filter.departure).endOf('day').toDate() }
+      }
+    }
+
+    // if (filter.arrival && filter.departure) {
+    //   //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
+    //   filter.arrival = String(filter.arrival).replace(/^\/|\/i$/g, '');
+    //   // Chuyển đổi thành ObjectId nếu giá trị là một chuỗi ObjectId hợp lệ
+    //   if (dayjs(filter.arrival).isValid()) {
+    //     filter.arrival = { $gte: dayjs(filter.arrival).startOf('day').toDate(), $lte: dayjs(filter.arrival).endOf('day').toDate() }
+    //   }
+
+    //   //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
+    //   filter.departure = String(filter.departure).replace(/^\/|\/i$/g, '');
+    //   // Chuyển đổi thành ObjectId nếu giá trị là một chuỗi ObjectId hợp lệ
+    //   if (dayjs(filter.departure).isValid()) {
+    //     filter.departure = { $gte: dayjs(filter.departure).startOf('day').toDate(), $lte: dayjs(filter.departure).endOf('day').toDate() }
+    //   }
+
+    // }
+
+    console.log('filter.arrival', filter.arrival);
+    console.log('filter.departure', filter.departure);
+
+    // const dataSearch = {
+    //   $or: [
+    //     {
+    //       startTime: { $gte: filter.arrival.startOf('day').toDate(), $lte: filter.arrival.endOf('day').toDate() }
+    //     },
+    //     {
+    //       endTime: { $gte: filter.departure.startOf('day').toDate(), $lte: filter.departure.endOf('day').toDate() }
+    //     }
+    //   ]
+    // }
+
+    console.log('filter', filter);
 
     delete filter.current
     delete filter.pageSize
