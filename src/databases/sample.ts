@@ -356,6 +356,71 @@ export const INIT_PERMISSIONS = [
         "createdAt": "2024-04-03T07:11:34.219Z",
         "updatedAt": "2024-04-03T07:16:05.475Z",
         "__v": 0,
-    }
+    },
+    // apartment
+    {
+        "_id": "6618cf600aaa5505ea6be647",
+        "name": "Xem căn hộ",
+        "apiPath": "/api/v1/apartment",
+        "method": "GET",
+        "module": "APARTMENT",
+        "createdBy": {
+            "_id": "660cf0300158ef1253845120",
+            "phone": "0933634933"
+        },
+        "isDeleted": false,
+        "deletedAt": null,
+        "createdAt": "2024-04-12T06:06:24.625Z",
+        "updatedAt": "2024-04-12T06:06:24.625Z",
+        "__v": 0
+    },
+    {
+        "_id": "6618cf840aaa5505ea6be650",
+        "name": "Tạo căn hộ",
+        "apiPath": "/api/v1/apartment",
+        "method": "POST",
+        "module": "APARTMENT",
+        "createdBy": {
+            "_id": "660cf0300158ef1253845120",
+            "phone": "0933634933"
+        },
+        "isDeleted": false,
+        "deletedAt": null,
+        "createdAt": "2024-04-12T06:07:00.367Z",
+        "updatedAt": "2024-04-12T06:07:00.367Z",
+        "__v": 0
+    },
+    {
+        "_id": "6618cfa80aaa5505ea6be655",
+        "name": "Xoá căn hộ",
+        "apiPath": "/api/v1/apartment/:id",
+        "method": "DELETE",
+        "module": "APARTMENT",
+        "createdBy": {
+            "_id": "660cf0300158ef1253845120",
+            "phone": "0933634933"
+        },
+        "isDeleted": false,
+        "deletedAt": null,
+        "createdAt": "2024-04-12T06:07:36.003Z",
+        "updatedAt": "2024-04-12T06:07:36.003Z",
+        "__v": 0
+    },
+    {
+        "_id": "6618cfc20aaa5505ea6be65a",
+        "name": "Cập nhật căn hộ",
+        "apiPath": "/api/v1/apartment/:id",
+        "method": "PATCH",
+        "module": "APARTMENT",
+        "createdBy": {
+            "_id": "660cf0300158ef1253845120",
+            "phone": "0933634933"
+        },
+        "isDeleted": false,
+        "deletedAt": null,
+        "createdAt": "2024-04-12T06:08:02.978Z",
+        "updatedAt": "2024-04-12T06:08:02.978Z",
+        "__v": 0
+    },
 
 ]

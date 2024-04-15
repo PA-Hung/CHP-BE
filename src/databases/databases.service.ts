@@ -77,6 +77,13 @@ export class DatabasesService implements OnModuleInit {
                         password: this.userService.hassPassword(this.configService.get<string>("INIT_PASSWORD")),
                         role: userRole?._id
                     },
+                    {
+                        name: "Châu Homestay Admin",
+                        phone: "0963686963",
+                        password: this.userService.hassPassword(this.configService.get<string>("INIT_PASSWORD")),
+                        role: userRole?._id
+                    },
+
                 ])
             }
 
