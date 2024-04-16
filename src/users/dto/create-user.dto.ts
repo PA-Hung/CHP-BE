@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty } from 'class-validator';
 import mongoose from 'mongoose';
 
 export class CreateUserDto {
@@ -14,6 +14,11 @@ export class CreateUserDto {
     @IsNotEmpty()
     @IsMongoId()
     role: mongoose.Schema.Types.ObjectId;
+
+    @IsNotEmpty()
+    @IsMongoId({ each: true })
+    @IsArray()
+    apartments: mongoose.Schema.Types.ObjectId[]
 }
 
 export class RegisterUserDto {

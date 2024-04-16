@@ -11,6 +11,7 @@ import { Accommodation, AccommodationSchema } from 'src/accommodation/schemas/ac
     { name: Accommodation.name, schema: AccommodationSchema },
   ])],
   controllers: [ApartmentController],
-  providers: [ApartmentService]
+  providers: [ApartmentService],
+  exports: [ApartmentService]
 })
 export class ApartmentModule { }

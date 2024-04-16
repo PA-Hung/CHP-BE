@@ -33,14 +33,15 @@ export class AuthService {
     }
 
     async loginService(user: IUser, response: Response) {
-        const { _id, name, phone, role, permissions } = user;
+        const { _id, name, phone, role, permissions, apartments } = user;
         const payload = {
             sub: "token login",
             iss: "from server",
             _id,
             name,
             phone,
-            role
+            role,
+            apartments
         };
 
         const refresh_token = this.createRefreshToken(payload)
@@ -59,7 +60,8 @@ export class AuthService {
                 name,
                 phone,
                 role,
-                permissions
+                permissions,
+                apartments
             }
         };
     }
@@ -87,14 +89,15 @@ export class AuthService {
             })
             const user = await this.usersService.findUserByToken(refreshToken)
             if (user) {
-                const { _id, name, phone, role } = user;
+                const { _id, name, phone, role, apartments } = user;
                 const payload = {
                     sub: "refresh token",
                     iss: "from server",
                     _id,
                     name,
                     phone,
-                    role
+                    role,
+                    apartments
                 };
 
                 const refresh_token = this.createRefreshToken(payload)
@@ -117,7 +120,8 @@ export class AuthService {
                         name,
                         phone,
                         role,
-                        permissions: roleTemp?.permissions ?? []
+                        permissions: roleTemp?.permissions ?? [],
+                        apartments
                     }
                 };
             } else {

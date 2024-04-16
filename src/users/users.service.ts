@@ -11,7 +11,6 @@ import aqp from 'api-query-params';
 import { Role, RoleDocument } from 'src/roles/schemas/role.schema';
 import { USER_ROLE } from 'src/databases/sample';
 
-
 @Injectable()
 export class UsersService {
   constructor(
@@ -42,6 +41,7 @@ export class UsersService {
       password: hassPassword,
       name: createUserData.name,
       role: createUserData.role,
+      apartments: createUserData.apartments,
       createdBy: {
         _id: userAuthInfo._id,
         phone: userAuthInfo.phone
@@ -78,14 +78,20 @@ export class UsersService {
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
-      .populate({
-        path: "role",
-        select: { _id: 1, name: 1 },
-        options: {
-          skip: offset,
-          limit: limit,
-        },
-      })
+      .populate(
+        {
+          path: "role",
+          select: { _id: 1, name: 1 },
+          options: { skip: offset, limit: limit, },
+        }
+      )
+      .populate(
+        {
+          path: "apartments",
+          select: { code: 1 },
+          options: { skip: offset, limit: limit, },
+        }
+      )
       .select('-password')
       .exec();
     return {
@@ -109,7 +115,9 @@ export class UsersService {
   }
 
   findOneByUsername(phone: string) {
-    const response = this.userModel.findOne({ phone }).populate({ path: "role", select: { name: 1 } })
+    const response = this.userModel.findOne({ phone })
+      .populate({ path: "role", select: { name: 1 } })
+      .populate({ path: "apartments", select: { _id: 1, code: 1 } })
     return response
   }
 
@@ -149,7 +157,7 @@ export class UsersService {
         phone: userAuthInfo.phone
       }
     });
-    return this.userModel.softDelete({ _id: id })
+    return this.userModel.deleteOne({ _id: id })
   }
 
   updateUserToken = async (refreshToken: string, _id: string) => {

@@ -12,4 +12,5 @@ export interface IUser {
         method: string;
         module: string;
     }[]
+    apartments?: string[]
 }
