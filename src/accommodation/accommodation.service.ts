@@ -8,6 +8,8 @@ import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import mongoose, { Types } from 'mongoose';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 @Injectable()
 export class AccommodationService {
@@ -18,8 +20,9 @@ export class AccommodationService {
   ) { }
 
   async create(createAccommodationDto: CreateAccommodationDto, userAuthInfo: IUser) {
+
+    const formattedBirthDate = dayjs(createAccommodationDto.birthday, 'DD/MM/YYYY').format();
     const formattedArrivalDate = dayjs(createAccommodationDto.arrival);
-    const formattedBirthDate = dayjs(createAccommodationDto.birthday);
     const formattedDepartureDate = dayjs(createAccommodationDto.departure);
 
     if (formattedArrivalDate.isBefore(dayjs(), 'day')) {
@@ -39,7 +42,8 @@ export class AccommodationService {
       }
     }
 
-    if (!formattedBirthDate.isBefore(dayjs(), 'day')) {
+    const formattedBirthDateObj = dayjs(formattedBirthDate);
+    if (!formattedBirthDateObj.isBefore(dayjs().startOf('day'))) {
       throw new BadRequestException(`Ngày sinh phải bé hơn ngày hiện tại !`);
     }
 
@@ -50,6 +54,7 @@ export class AccommodationService {
     const resData = await this.accommodationModel.create({
       userId: userAuthInfo._id,
       ...createAccommodationDto,
+      birthday: formattedBirthDate,
       createdBy: {
         _id: userAuthInfo._id,
         phone: userAuthInfo.phone
