@@ -125,11 +125,12 @@ export class AuthService {
                     }
                 };
             } else {
-                throw new BadRequestException(`Refresh token không hợp lệ !`);
-
+                response.clearCookie('refresh_token')
+                throw new BadRequestException(`Refresh token không hợp lệ 1!`);
             }
         } catch (error) {
-            throw new BadRequestException(`Refresh token không hợp lệ !`);
+            response.clearCookie('refresh_token')
+            throw new BadRequestException(`Refresh token không hợp lệ 2!`);
         }
     }
 

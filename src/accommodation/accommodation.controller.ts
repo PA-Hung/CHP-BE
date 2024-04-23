@@ -23,6 +23,16 @@ export class AccommodationController {
     return this.accommodationService.findAll(+currentPage, +limit, queryString);
   }
 
+  @Get('dashboard')
+  dashboard(
+    @Query('current') currentPage: string,
+    @Query('pageSize') limit: string,
+    @Query() queryString: string
+  ) {
+    return this.accommodationService.dashboard(+currentPage, +limit, queryString);
+  }
+
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.accommodationService.findOne(+id);

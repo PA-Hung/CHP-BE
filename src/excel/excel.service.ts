@@ -24,7 +24,7 @@ export class ExcelService {
     try {
       const apartmentObjectId = new ObjectId(apartmentId);
       // chuyen string ngay thang khong dung chuẩn về đúng chuẩn ISO8601 và convert thanh kieu Date đưa vào db
-      const convertToISO8601Date = (inputDate: string): dayjs.Dayjs | null => {
+      const convertToISO8601DateBirthday = (inputDate: string): dayjs.Dayjs | null => {
         const [day, month, year] = inputDate.split('/');
         if (!(day && month)) {
           return null;
@@ -32,6 +32,28 @@ export class ExcelService {
         const formattedDate = year
           ? dayjs(`${year}-${month}-${day}T00:00:00.000Z`)
           : dayjs(`${new Date().getFullYear()}-${month}-${day}T00:00:00.000Z`);
+        return formattedDate.isValid() ? formattedDate : null;
+      };
+
+      const convertToISO8601DateArrival = (inputDate: string): dayjs.Dayjs | null => {
+        const [day, month, year] = inputDate.split('/');
+        if (!(day && month)) {
+          return null;
+        }
+        const formattedDate = year
+          ? dayjs(`${year}-${month}-${day}T21:00:00.000Z`)
+          : dayjs(`${new Date().getFullYear()}-${month}-${day}T21:00:00.000Z`);
+        return formattedDate.isValid() ? formattedDate : null;
+      };
+
+      const convertToISO8601DateDeparture = (inputDate: string): dayjs.Dayjs | null => {
+        const [day, month, year] = inputDate.split('/');
+        if (!(day && month)) {
+          return null;
+        }
+        const formattedDate = year
+          ? dayjs(`${year}-${month}-${day}T19:00:00.000Z`)
+          : dayjs(`${new Date().getFullYear()}-${month}-${day}T19:00:00.000Z`);
         return formattedDate.isValid() ? formattedDate : null;
       };
 
@@ -47,7 +69,7 @@ export class ExcelService {
         const mappedData = rawData.map((item) => ({
           userId: userInfo._id,
           name: item['Họ và tên (*)'] || '',
-          birthday: convertToISO8601Date(item['Ngày, tháng, năm sinh (*)']) || null,
+          birthday: convertToISO8601DateBirthday(item['Ngày, tháng, năm sinh (*)']) || null,
           gender: item['Giới tính (*)'] || '',
           identification_number: item['CMND/ CCCD/ Số định danh (*)'] || '',
           passport: item['Số hộ chiếu (*)'] || '',
@@ -63,8 +85,8 @@ export class ExcelService {
           ward: item['Địa chỉ – Phường xã'] || '',
           address: item['Địa chỉ – Số nhà'] || '',
           residential_status: item['Loại cư trú (*)'] || '',
-          arrival: convertToISO8601Date(item['Thời gian lưu trú (đến ngày) (*)']) || null,
-          departure: convertToISO8601Date(item['Thời gian lưu trú (đi ngày)']) || null,
+          arrival: convertToISO8601DateArrival(item['Thời gian lưu trú (đến ngày) (*)']) || null,
+          departure: convertToISO8601DateDeparture(item['Thời gian lưu trú (đi ngày)']) || null,
           reason: item['Lý do lưu trú'] || '',
           apartment: apartmentObjectId,
         }));
