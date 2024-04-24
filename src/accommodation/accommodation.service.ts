@@ -10,6 +10,8 @@ import mongoose, { Types } from 'mongoose';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
@@ -142,8 +144,6 @@ export class AccommodationService {
     }
   }
 
-
-
   async dashboard(currentPage: number, limit: number, queryString: string) {
     const { filter, projection, sort, population } = aqp(queryString);
     if (filter.arrival) {
@@ -171,9 +171,6 @@ export class AccommodationService {
         };
       }
     }
-
-    console.log('filterarrival', filter.arrival);
-    console.log('filterdeparture', filter.departure);
 
     delete filter.current
     delete filter.pageSize
