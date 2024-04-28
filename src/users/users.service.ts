@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateUserDto, RegisterUserDto } from './dto/create-user.dto';
+import { ChangePasswordDto, CreateUserDto, RegisterUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
@@ -137,6 +137,29 @@ export class UsersService {
       }
     );
     return updated
+  }
+
+  async changePassword(ChangePasswordDto: ChangePasswordDto, user: IUser) {
+    const userData = await this.userModel.findOne({ _id: user._id })
+    if (userData) {
+      const isValidPassword = this.checkUserPassword(ChangePasswordDto.oldPassword, userData.password)
+      if (isValidPassword === true) {
+        const hassPassword = this.hassPassword(ChangePasswordDto.newPassword)
+        const updated = await this.userModel.updateOne(
+          { _id: user._id },
+          {
+            password: hassPassword,
+            updatedBy: {
+              _id: user._id,
+              phone: user.phone
+            }
+          }
+        );
+        return updated
+      } else {
+        throw new BadRequestException(`Mật khẩu cũ không chính xác !`)
+      }
+    }
   }
 
   async remove(id: string, userAuthInfo: IUser) {

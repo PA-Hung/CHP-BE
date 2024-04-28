@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { ChangePasswordDto, CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Public, ReqUser, ResponseMessage } from 'src/decorator/customize';
 import { IUser } from './users.interface';
@@ -42,6 +42,12 @@ export class UsersController {
   @Patch()
   async update(@Body() updateUserData: UpdateUserDto, @ReqUser() user: IUser) {
     return await this.usersService.update(updateUserData, user);
+  }
+
+  @ResponseMessage('Change Password !')
+  @Patch('change-password')
+  async changePassword(@Body() ChangePasswordDto: ChangePasswordDto, @ReqUser() user: IUser) {
+    return await this.usersService.changePassword(ChangePasswordDto, user);
   }
 
   @ResponseMessage('Detele a user !')
