@@ -15,8 +15,6 @@ dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
-//console.log('date time GMT+7', dayjs().format('DD-MM-YYYYTHH:mm:ss.SSSZ'));
-
 
 @Injectable()
 export class AccommodationService {
@@ -28,25 +26,27 @@ export class AccommodationService {
 
   async create(createAccommodationDto: CreateAccommodationDto, userAuthInfo: IUser) {
     const formattedBirthDate = dayjs(createAccommodationDto.birthday, 'DD/MM/YYYY').format();
-    const formattedArrivalDate = dayjs(createAccommodationDto.arrival).set('hour', 21).set('minute', 0).set('second', 0);
-    const formattedDepartureDate = dayjs(createAccommodationDto.departure).set('hour', 19).set('minute', 0).set('second', 0);
+    const formattedArrivalDate = dayjs(createAccommodationDto.arrival).set('hour', 14).set('minute', 0).set('second', 0);
+    // nhận phòng lúc 2h chiều
+    const formattedDepartureDate = dayjs(createAccommodationDto.departure).set('hour', 12).set('minute', 0).set('second', 0);
+    // trả phòng lúc 12h trưa
 
-    const checkExistingRecord = await this.accommodationModel.findOne({
-      $or: [
-        { identification_number: createAccommodationDto.identification_number },
-        { passport: createAccommodationDto.passport }
-      ],
-      arrival: {
-        $gte: formattedArrivalDate
-      },
-      departure: {
-        $lte: formattedDepartureDate
-      }
-    });
+    // const checkExistingRecord = await this.accommodationModel.findOne({
+    //   $or: [
+    //     { identification_number: createAccommodationDto.identification_number },
+    //     { passport: createAccommodationDto.passport }
+    //   ],
+    //   arrival: {
+    //     $gte: formattedArrivalDate
+    //   },
+    //   departure: {
+    //     $lte: formattedDepartureDate
+    //   }
+    // });
 
-    if (checkExistingRecord) {
-      throw new BadRequestException(`Thông tin lưu trú của : ${createAccommodationDto.name} đã tồn tại !`);
-    }
+    // if (checkExistingRecord) {
+    //   throw new BadRequestException(`Thông tin lưu trú của : ${createAccommodationDto.name} đã tồn tại !`);
+    // }
 
     const formattedBirthDateObj = dayjs(formattedBirthDate);
     if (!formattedBirthDateObj.isBefore(dayjs().startOf('day'))) {
@@ -73,7 +73,7 @@ export class AccommodationService {
 
   async findAll(currentPage: number, limit: number, queryString: string) {
     const { filter, projection, sort, population } = aqp(queryString);
-    //console.log('filterarrival', filter.arrival);
+
     // Kiểm tra xem có trường userId trong filter không
     if (filter.userId) {
       //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
@@ -101,7 +101,7 @@ export class AccommodationService {
       if (dayjs(filter.arrival).isValid()) {
         // Tạo điều kiện tìm kiếm
         filter.arrival = {
-          $gte: dayjs(filter.arrival).startOf('day').add(21, 'hours').toDate(), // Lớn hơn hoặc bằng 14 giờ
+          $gte: dayjs(filter.arrival).startOf('day').add(14, 'hours').toDate(), // lớn hơn hoặc bằng checkin 2h chiều
         };
       }
     }
@@ -111,11 +111,9 @@ export class AccommodationService {
       filter.departure = String(filter.departure).replace(/^\/|\/i$/g, '');
       // Chuyển đổi thành một đối tượng ngày tháng nếu giá trị là một chuỗi ngày tháng hợp lệ
       if (dayjs(filter.departure).isValid()) {
-        // Tạo một biến chứa ngày hôm sau
-        const nextDay = dayjs(filter.departure).add(1, 'day');
         // Tạo điều kiện tìm kiếm
         filter.departure = {
-          $lte: nextDay.startOf('day').add(19, 'hours').toDate() // Nhỏ hơn hoặc bằng 12 giờ hôm sau
+          $lte: dayjs(filter.departure).endOf('day').add(12, 'hours').toDate() // Nhỏ hơn hoặc bằng checkout 12 giờ 
         };
       }
     }
@@ -146,6 +144,7 @@ export class AccommodationService {
 
   async dashboard(currentPage: number, limit: number, queryString: string) {
     const { filter, projection, sort, population } = aqp(queryString);
+
     if (filter.arrival) {
       // Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
       filter.arrival = String(filter.arrival).replace(/^\/|\/i$/g, '');
@@ -153,7 +152,7 @@ export class AccommodationService {
       if (dayjs(filter.arrival).isValid()) {
         // Tạo điều kiện tìm kiếm
         filter.arrival = {
-          $gte: dayjs(filter.arrival).startOf('day').add(21, 'hours').toDate(), // Lớn hơn hoặc bằng 14 giờ
+          $gte: dayjs(filter.arrival).startOf('day').add(14, 'hours').toDate(), // Lớn hơn hoặc bằng 14 giờ
         };
       }
     }
@@ -163,11 +162,9 @@ export class AccommodationService {
       filter.departure = String(filter.departure).replace(/^\/|\/i$/g, '');
       // Chuyển đổi thành một đối tượng ngày tháng nếu giá trị là một chuỗi ngày tháng hợp lệ
       if (dayjs(filter.departure).isValid()) {
-        // Tạo một biến chứa ngày hôm sau
-        const nextDay = dayjs(filter.departure).add(1, 'day');
         // Tạo điều kiện tìm kiếm
         filter.departure = {
-          $lte: nextDay.startOf('day').add(19, 'hours').toDate() // Nhỏ hơn hoặc bằng 12 giờ hôm sau
+          $lte: dayjs(filter.departure).endOf('day').add(12, 'hours').toDate() // Nhỏ hơn hoặc bằng 12 giờ
         };
       }
     }
@@ -220,26 +217,28 @@ export class AccommodationService {
 
   async update(updateAccommodationDto: UpdateAccommodationDto, userInfo: IUser) {
     const formattedBirthDate = dayjs(updateAccommodationDto.birthday, 'DD/MM/YYYY').format();
-    const formattedArrivalDate = dayjs(updateAccommodationDto.arrival).set('hour', 21).set('minute', 0).set('second', 0);
-    const formattedDepartureDate = dayjs(updateAccommodationDto.departure).set('hour', 19).set('minute', 0).set('second', 0);
+    const formattedArrivalDate = dayjs(updateAccommodationDto.arrival).set('hour', 14).set('minute', 0).set('second', 0);
+    // nhận phòng lúc 2h chiều
+    const formattedDepartureDate = dayjs(updateAccommodationDto.departure).set('hour', 12).set('minute', 0).set('second', 0);
+    // trả phần lúc 12h trưa
 
-    const checkExistingRecord = await this.accommodationModel.findOne({
-      _id: { $ne: updateAccommodationDto._id },
-      $or: [
-        { identification_number: updateAccommodationDto.identification_number },
-        { passport: updateAccommodationDto.passport }
-      ],
-      arrival: {
-        $gte: formattedArrivalDate
-      },
-      departure: {
-        $lte: formattedDepartureDate
-      }
-    });
+    // const checkExistingRecord = await this.accommodationModel.findOne({
+    //   _id: { $ne: updateAccommodationDto._id },
+    //   $or: [
+    //     { identification_number: updateAccommodationDto.identification_number },
+    //     { passport: updateAccommodationDto.passport }
+    //   ],
+    //   arrival: {
+    //     $gte: formattedArrivalDate
+    //   },
+    //   departure: {
+    //     $lte: formattedDepartureDate
+    //   }
+    // });
 
-    if (checkExistingRecord) {
-      throw new BadRequestException(`Thông tin lưu trú của : ${updateAccommodationDto.name} đã tồn tại !`);
-    }
+    // if (checkExistingRecord) {
+    //   throw new BadRequestException(`Thông tin lưu trú của : ${updateAccommodationDto.name} đã tồn tại !`);
+    // }
 
     const formattedBirthDateObj = dayjs(formattedBirthDate);
     if (!formattedBirthDateObj.isBefore(dayjs().startOf('day'))) {
@@ -247,7 +246,7 @@ export class AccommodationService {
     }
 
     if (formattedDepartureDate.isBefore(formattedArrivalDate)) {
-      throw new BadRequestException('Ngày khởi hành phải lớn hơn hoặc bằng ngày đến !');
+      throw new BadRequestException('Ngày khởi hành phải lớn hơn ngày đến !');
     }
 
     const updated = await this.accommodationModel.updateOne(
