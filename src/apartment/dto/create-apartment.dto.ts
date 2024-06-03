@@ -1,1 +1,3 @@
-export class CreateApartmentDto {}
+export class CreateApartmentDto {
+    code: string
+}

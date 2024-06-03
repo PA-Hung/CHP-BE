@@ -20,6 +20,10 @@ export class ApartmentService {
   ) { }
 
   async create(createApartmentDto: CreateApartmentDto, userInfo: IUser) {
+    const checkAparment = await this.apartmentModel.findOne({ code: createApartmentDto.code })
+    if (checkAparment) {
+      throw new BadRequestException(`Mã căn hộ : ${createApartmentDto.code} đã tồn tại !`);
+    }
     const resData = await this.apartmentModel.create({
       ...createApartmentDto,
       createdBy: {

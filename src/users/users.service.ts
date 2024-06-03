@@ -82,14 +82,12 @@ export class UsersService {
         {
           path: "role",
           select: { _id: 1, name: 1 },
-          options: { skip: offset, limit: limit, },
         }
       )
       .populate(
         {
           path: "apartments",
           select: { code: 1 },
-          options: { skip: offset, limit: limit, },
         }
       )
       .select('-password')
