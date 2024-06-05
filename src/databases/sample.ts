@@ -259,7 +259,7 @@ export const INIT_PERMISSIONS = [
         "__v": 0
     },
 
-    // mới thêm vào 
+    // mới thêm vào accommodation
 
     {
         "_id": "660cf3270158ef1253845187",
@@ -420,6 +420,24 @@ export const INIT_PERMISSIONS = [
         "deletedAt": null,
         "createdAt": "2024-04-12T06:08:02.978Z",
         "updatedAt": "2024-04-12T06:08:02.978Z",
+        "__v": 0
+    },
+
+    // dashboard
+    {
+        "_id": "662739eb0f8019f6acef289f",
+        "name": "Xem thống kê dashboard",
+        "apiPath": "/api/v1/accommodation/dashboard",
+        "method": "GET",
+        "module": "DASHBOARD",
+        "createdBy": {
+            "_id": "660cf0300158ef1253845120",
+            "phone": "0933634933"
+        },
+        "isDeleted": false,
+        "deletedAt": null,
+        "createdAt": "2024-04-03T06:11:51.755Z",
+        "updatedAt": "2024-04-03T06:20:38.973Z",
         "__v": 0
     },
 

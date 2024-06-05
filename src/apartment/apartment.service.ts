@@ -8,11 +8,14 @@ import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 import { Accommodation, AccommodationDocument } from 'src/accommodation/schemas/accommodation.schema';
+import { User, UserDocument } from 'src/users/schemas/user.schema';
 
 @Injectable()
 export class ApartmentService {
 
   constructor(
+    @InjectModel(User.name)
+    private userModel: SoftDeleteModel<UserDocument>,
     @InjectModel(Apartment.name)
     private apartmentModel: SoftDeleteModel<ApartmentDocument>,
     @InjectModel(Accommodation.name)
@@ -42,13 +45,30 @@ export class ApartmentService {
     let defaultLimit = +limit ? +limit : 10;
     const totalItems = (await this.apartmentModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
-    const result = await this.apartmentModel.find(filter)
+    const apartments = await this.apartmentModel.find(filter)
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
       .populate(population)
       .select(projection as any)
       .exec();
+
+    // Find users for each apartment
+    const apartmentIds = apartments.map(apartment => apartment._id);
+    const users = await this.userModel.find({ apartments: { $in: apartmentIds } })
+      .select('_id name phone apartments')
+      .lean()
+      .exec();
+
+    // Attach users to their respective apartments
+    const apartmentsWithUsers = apartments.map(apartment => {
+      const usersForApartment = users.filter(
+        user => user.apartments.some(
+          userApartment => userApartment.toString() === apartment._id.toString()
+        )
+      );
+      return { ...apartment.toObject(), users: usersForApartment[0] };
+    });
 
     return {
       meta: {
@@ -57,7 +77,7 @@ export class ApartmentService {
         pages: totalPages, //tổng số trang với điều kiện query
         total: totalItems // tổng số phần tử (số bản ghi)
       },
-      result //kết quả query
+      result: apartmentsWithUsers //kết quả query
     }
   }
 
@@ -78,10 +98,13 @@ export class ApartmentService {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return "Căn hộ không tồn tại !"
     }
-    const checkAparment = await this.accommodationModel.find({ apartment: id })
-
-    if (checkAparment.length !== 0) {
-      throw new BadRequestException(`Mã căn hộ này đã được sử dụng !`);
+    const existingUser = await this.userModel.findOne({ apartments: { $in: id }, _id: { $ne: id } }).exec();
+    if (existingUser) {
+      throw new BadRequestException('Mã căn hộ đã được quản lý bởi host !');
+    }
+    const existingAccommodation = await this.accommodationModel.find({ apartment: id })
+    if (existingAccommodation.length !== 0) {
+      throw new BadRequestException(`Mã căn hộ này đã được đặt cho khách lưu trú !`);
     }
     return this.apartmentModel.deleteOne({ _id: id })
   }

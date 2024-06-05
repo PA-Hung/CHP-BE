@@ -124,6 +124,10 @@ export class UsersService {
   }
 
   async update(updateUserData: UpdateUserDto, user: IUser) {
+    const existingApartment = await this.userModel.findOne({ apartments: { $in: updateUserData.apartments }, _id: { $ne: updateUserData._id } }).exec();
+    if (existingApartment) {
+      throw new BadRequestException('Mã căn hộ đã được quản lý bởi người dùng khác.');
+    }
     const updated = await this.userModel.updateOne(
       { _id: updateUserData._id },
       {
