@@ -78,12 +78,7 @@ export class UsersService {
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
-      .populate(
-        {
-          path: "role",
-          select: { _id: 1, name: 1 },
-        }
-      )
+      .populate({ path: "role", select: { _id: 1, name: 1 }, })
       .populate(
         {
           path: "apartments",
