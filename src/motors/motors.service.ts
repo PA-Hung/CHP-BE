@@ -26,6 +26,7 @@ export class MotorsService {
     }
     const resData = await this.motorModel.create({
       ...createMotorDto,
+      rental_status: false,
       createdBy: {
         _id: userInfo._id,
         phone: userInfo.phone
@@ -34,7 +35,9 @@ export class MotorsService {
     return resData
   }
 
+
   async findAll(currentPage: number, limit: number, queryString: string) {
+
     const { filter, projection, sort, population } = aqp(queryString);
     delete filter.current
     delete filter.pageSize
@@ -42,6 +45,7 @@ export class MotorsService {
     let defaultLimit = +limit ? +limit : 10;
     const totalItems = (await this.motorModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
+
     const motors = await this.motorModel.find(filter)
       .skip(offset)
       .limit(defaultLimit)
@@ -60,6 +64,7 @@ export class MotorsService {
       result: motors //kết quả query
     }
   }
+
 
   findOne(id: number) {
     return `This action returns a #${id} motor`;

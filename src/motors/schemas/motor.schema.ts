@@ -11,11 +11,15 @@ export class Motor {
     @Prop()
     brand: string
     @Prop()
-    status: string
+    availability_status: boolean
+    @Prop()
+    rental_status: boolean
     @Prop()
     priceD: Number
     @Prop()
     priceH: Number
+    @Prop()
+    note: string
 
     @Prop({ type: Object })
     createdBy: {

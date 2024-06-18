@@ -22,7 +22,7 @@ export class CreateBookingDto {
         _id: string,
         license: string,
         brand: string,
-        status: string,
+        rental_status: boolean,
         start_date: Date,
         end_date: Date
         updatedAt: Date,

@@ -7,6 +7,7 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
+import { Motor, MotorDocument } from 'src/motors/schemas/motor.schema';
 
 @Injectable()
 export class BookingsService {
@@ -14,6 +15,8 @@ export class BookingsService {
   constructor(
     @InjectModel(Booking.name)
     private bookingModel: SoftDeleteModel<BookingDocument>,
+    @InjectModel(Motor.name)
+    private motorModel: SoftDeleteModel<MotorDocument>,
   ) { }
 
   async create(createBookingDto: CreateBookingDto, userInfo: IUser) {
@@ -25,6 +28,15 @@ export class BookingsService {
         phone: userInfo.phone
       }
     })
+
+    // Cập nhật rental_status của từng rentalMotor
+    for (const motor of createBookingDto.motors) {
+      await this.motorModel.updateOne(
+        { _id: motor._id },
+        { $set: { rental_status: motor.rental_status } }
+      );
+    }
+
     return resData
   }
 
@@ -78,6 +90,21 @@ export class BookingsService {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return "Hợp đồng không tồn tại !"
     }
+    // Tìm booking cần xoá để lấy thông tin motors
+    const booking = await this.bookingModel.findOne({ _id: id });
+    if (!booking) {
+      return "Hợp đồng không tồn tại!";
+    }
+
+    // Lấy ra danh sách các _id của motors trong booking
+    const motorIds = booking.motors.map(motor => motor._id);
+
+    // Cập nhật trạng thái rental_status của các motor về false
+    await this.motorModel.updateMany(
+      { _id: { $in: motorIds } },
+      { $set: { rental_status: false } }
+    );
+
     return this.bookingModel.deleteOne({ _id: id })
   }
 }
