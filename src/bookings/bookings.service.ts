@@ -21,6 +21,7 @@ export class BookingsService {
   async create(createBookingDto: CreateBookingDto, userInfo: IUser) {
     const resData = await this.bookingModel.create({
       ...createBookingDto,
+      motors: createBookingDto.motors,
       createdBy: {
         _id: userInfo._id,
         phone: userInfo.phone
@@ -42,7 +43,6 @@ export class BookingsService {
       .limit(defaultLimit)
       .sort(sort as any)
       .populate({ path: "guest_id", select: { _id: 1, name: 1 }, })
-      .populate({ path: "motor_id", select: { _id: 1, brand: 1, license: 1 }, })
       .select(projection as any)
       .exec();
 

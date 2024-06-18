@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Guest } from 'src/guests/schemas/guest.schema';
-import { Motor, } from 'src/motors/schemas/motor.schema';
+import { User } from 'src/users/schemas/user.schema';
 
 export type BookingDocument = HydratedDocument<Booking>;
 
@@ -14,14 +14,32 @@ export class Booking {
     @Prop()
     end_date: Date
 
-    @Prop()
-    num_nights: Number
-
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: Guest.name })
     guest_id: mongoose.Schema.Types.ObjectId;
 
-    @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: Motor.name })
-    motor_id: Motor[]
+    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
+    user_id: mongoose.Schema.Types.ObjectId;
+
+    @Prop({ type: mongoose.Schema.Types.Array })
+    motors: {
+        license: string,
+        brand: string,
+        status: string,
+        start_date: Date,
+        end_date: Date
+        updatedAt: Date,
+        updatedBy: {
+            _id: mongoose.Schema.Types.ObjectId,
+            phone: string
+        };
+    }[]
+
+    @Prop()
+    method: string
+    @Prop()
+    discount: Number
+    @Prop()
+    deposit: Number
 
     @Prop()
     status: String
