@@ -11,9 +11,11 @@ export class Motor {
     @Prop()
     brand: string
     @Prop()
-    price: string
-    @Prop()
     status: string
+    @Prop()
+    priceD: Number
+    @Prop()
+    priceH: Number
 
     @Prop({ type: Object })
     createdBy: {

@@ -28,13 +28,13 @@ export class BookingsController {
     return this.bookingsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
-    return this.bookingsService.update(+id, updateBookingDto);
+  @Patch()
+  update(@Body() updateBookingDto: UpdateBookingDto, @ReqUser() userInfo: IUser) {
+    return this.bookingsService.update(updateBookingDto, userInfo);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.bookingsService.remove(+id);
+    return this.bookingsService.remove(id);
   }
 }

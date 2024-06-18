@@ -19,6 +19,7 @@ export class CreateBookingDto {
 
     @IsNotEmpty()
     motors: {
+        _id: string,
         license: string,
         brand: string,
         status: string,

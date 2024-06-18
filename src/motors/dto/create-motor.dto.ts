@@ -1,6 +1,7 @@
 export class CreateMotorDto {
     license: string
     brand: string
-    price: string
     status: string
+    priceD: Number
+    priceH: Number
 }

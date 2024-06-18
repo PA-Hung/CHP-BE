@@ -6,6 +6,8 @@ import { Motor, MotorDocument } from './schemas/motor.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
+import { Booking, BookingDocument } from 'src/bookings/schemas/booking.schema';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class MotorsService {
@@ -13,6 +15,8 @@ export class MotorsService {
   constructor(
     @InjectModel(Motor.name)
     private motorModel: SoftDeleteModel<MotorDocument>,
+    @InjectModel(Booking.name)
+    private bookingModel: SoftDeleteModel<BookingDocument>,
   ) { }
 
   async create(createMotorDto: CreateMotorDto, userInfo: IUser) {
@@ -65,7 +69,10 @@ export class MotorsService {
     return `This action updates a #${id} motor`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} motor`;
+  async remove(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return "Xe không tồn tại !"
+    }
+    return this.motorModel.deleteOne({ _id: id })
   }
 }

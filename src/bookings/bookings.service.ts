@@ -6,7 +6,7 @@ import { Booking, BookingDocument } from './schemas/booking.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
-import { Guest, GuestDocument } from 'src/guests/schemas/guest.schema';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class BookingsService {
@@ -14,8 +14,6 @@ export class BookingsService {
   constructor(
     @InjectModel(Booking.name)
     private bookingModel: SoftDeleteModel<BookingDocument>,
-    @InjectModel(Guest.name)
-    private guestModel: SoftDeleteModel<GuestDocument>,
   ) { }
 
   async create(createBookingDto: CreateBookingDto, userInfo: IUser) {
@@ -61,11 +59,25 @@ export class BookingsService {
     return `This action returns a #${id} booking`;
   }
 
-  update(id: number, updateBookingDto: UpdateBookingDto) {
-    return `This action updates a #${id} booking`;
+  async update(updateBookingDto: UpdateBookingDto, userInfo: IUser) {
+    const updated = await this.bookingModel.updateOne(
+      { _id: updateBookingDto._id },
+      {
+        ...updateBookingDto,
+        motors: updateBookingDto.motors,
+        updatedBy: {
+          _id: userInfo._id,
+          phone: userInfo.phone
+        }
+      }
+    );
+    return updated
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} booking`;
+  async remove(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return "Hợp đồng không tồn tại !"
+    }
+    return this.bookingModel.deleteOne({ _id: id })
   }
 }

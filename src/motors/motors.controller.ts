@@ -35,6 +35,6 @@ export class MotorsController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.motorsService.remove(+id);
+    return this.motorsService.remove(id);
   }
 }
