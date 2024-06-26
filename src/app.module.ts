@@ -16,6 +16,7 @@ import { ApartmentModule } from './apartment/apartment.module';
 import { MotorsModule } from './motors/motors.module';
 import { GuestsModule } from './guests/guests.module';
 import { BookingsModule } from './bookings/bookings.module';
+import { PaymentsModule } from './payments/payments.module';
 
 
 @Module({
@@ -46,6 +47,7 @@ import { BookingsModule } from './bookings/bookings.module';
     MotorsModule,
     GuestsModule,
     BookingsModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

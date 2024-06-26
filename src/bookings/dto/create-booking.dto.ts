@@ -17,6 +17,8 @@ export class CreateBookingDto {
     @IsMongoId()
     user_id: mongoose.Schema.Types.ObjectId;
 
+    commission: Number
+
     @IsNotEmpty()
     motors: {
         _id: string,
@@ -24,7 +26,9 @@ export class CreateBookingDto {
         brand: string,
         rental_status: boolean,
         start_date: Date,
-        end_date: Date
+        end_date: Date,
+        amount: Number,
+        late_fee_amount: Number,
         updatedAt: Date,
         updatedBy: {
             _id: mongoose.Schema.Types.ObjectId,

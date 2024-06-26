@@ -52,7 +52,7 @@ export class BookingsService {
       .skip(offset)
       .limit(defaultLimit)
       .sort(sort as any)
-      .populate({ path: "guest_id", select: { _id: 1, name: 1 }, })
+      .populate({ path: "guest_id", select: { _id: 1, name: 1, phone: 1, cccd: 1 }, })
       .select(projection as any)
       .exec();
 

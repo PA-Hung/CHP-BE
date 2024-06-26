@@ -20,6 +20,9 @@ export class Booking {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: User.name })
     user_id: mongoose.Schema.Types.ObjectId;
 
+    @Prop()
+    commission: Number
+
     @Prop({ type: mongoose.Schema.Types.Array })
     motors: {
         _id: string,
@@ -27,7 +30,9 @@ export class Booking {
         brand: string,
         status: string,
         start_date: Date,
-        end_date: Date
+        end_date: Date,
+        amount: Number,
+        late_fee_amount: Number,
         updatedAt: Date,
         updatedBy: {
             _id: mongoose.Schema.Types.ObjectId,
