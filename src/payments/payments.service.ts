@@ -1,11 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { Payment, PaymentDocument } from './schemas/payment.schema';
+import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
+import { IUser } from 'src/users/users.interface';
 
 @Injectable()
 export class PaymentsService {
-  create(createPaymentDto: CreatePaymentDto) {
-    return 'This action adds a new payment';
+
+  constructor(
+    @InjectModel(Payment.name)
+    private paymentModel: SoftDeleteModel<PaymentDocument>,
+  ) { }
+
+  async create(createPaymentDto: CreatePaymentDto, userInfo: IUser) {
+    const resData = await this.paymentModel.create({
+      ...createPaymentDto,
+      createdBy: {
+        _id: userInfo._id,
+        phone: userInfo.phone
+      }
+    })
+    return resData
   }
 
   findAll() {
