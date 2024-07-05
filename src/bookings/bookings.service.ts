@@ -48,6 +48,7 @@ export class BookingsService {
     let defaultLimit = +limit ? +limit : 10;
     const totalItems = (await this.bookingModel.find(filter)).length;
     const totalPages = Math.ceil(totalItems / defaultLimit);
+
     const bookings = await this.bookingModel.find(filter)
       .skip(offset)
       .limit(defaultLimit)
@@ -72,18 +73,54 @@ export class BookingsService {
   }
 
   async update(updateBookingDto: UpdateBookingDto, userInfo: IUser) {
-    const updated = await this.bookingModel.updateOne(
-      { _id: updateBookingDto._id },
-      {
-        ...updateBookingDto,
-        motors: updateBookingDto.motors,
-        updatedBy: {
-          _id: userInfo._id,
-          phone: userInfo.phone
+    if (updateBookingDto.status === "Hợp đồng mở") {
+
+      // Lấy ra danh sách các _id của motors trong booking
+      const motorIds = updateBookingDto.motors.map(motor => motor._id);
+
+      // Cập nhật trạng thái rental_status của các motor về false
+      await this.motorModel.updateMany(
+        { _id: { $in: motorIds } },
+        { $set: { rental_status: true } }
+      );
+
+      const updated = await this.bookingModel.updateOne(
+        { _id: updateBookingDto._id },
+        {
+          ...updateBookingDto,
+          motors: updateBookingDto.motors,
+          updatedBy: {
+            _id: userInfo._id,
+            phone: userInfo.phone
+          }
         }
-      }
-    );
-    return updated
+      );
+      return updated
+    }
+    if (updateBookingDto.status === "Hợp đồng đóng") {
+
+      // Lấy ra danh sách các _id của motors trong booking
+      const motorIds = updateBookingDto.motors.map(motor => motor._id);
+
+      // Cập nhật trạng thái rental_status của các motor về false
+      await this.motorModel.updateMany(
+        { _id: { $in: motorIds } },
+        { $set: { rental_status: false } }
+      );
+
+      const updated = await this.bookingModel.updateOne(
+        { _id: updateBookingDto._id },
+        {
+          ...updateBookingDto,
+          motors: updateBookingDto.motors,
+          updatedBy: {
+            _id: userInfo._id,
+            phone: userInfo.phone
+          }
+        }
+      );
+      return updated
+    }
   }
 
   async remove(id: string) {

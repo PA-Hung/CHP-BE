@@ -16,7 +16,7 @@ export class CreateBookingDto {
     @IsNotEmpty()
     @IsMongoId()
     user_id: mongoose.Schema.Types.ObjectId;
-
+    @IsNotEmpty()
     commission: Number
 
     @IsNotEmpty()
@@ -38,13 +38,17 @@ export class CreateBookingDto {
 
     @IsNotEmpty()
     method: string
-
+    @IsNotEmpty()
     discount: Number
-
+    @IsNotEmpty()
     deposit: Number
 
     @IsNotEmpty()
     status: String
+    @IsNotEmpty()
+    remaining_amount: Number
+    @IsNotEmpty()
+    late_fee_amount: Number
 
     @IsNotEmpty()
     amount: Number

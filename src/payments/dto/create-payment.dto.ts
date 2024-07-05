@@ -14,6 +14,7 @@ export class CreatePaymentDto {
     discount: Number
 
     deposit: Number
+    late_fee_amount: Number
     @IsNotEmpty()
     amount: Number
     @IsNotEmpty()

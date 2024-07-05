@@ -51,6 +51,12 @@ export class Booking {
     status: String
 
     @Prop()
+    remaining_amount: Number
+
+    @Prop()
+    late_fee_amount: Number
+
+    @Prop()
     amount: Number
 
     @Prop({ type: Object })

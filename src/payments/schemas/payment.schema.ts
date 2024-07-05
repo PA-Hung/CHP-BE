@@ -24,6 +24,8 @@ export class Payment {
     @Prop()
     amount: Number
     @Prop()
+    late_fee_amount: Number
+    @Prop()
     paid: Number
     @Prop()
     payment_method: string
