@@ -145,6 +145,7 @@ export class AccommodationService {
   async dashboard(currentPage: number, limit: number, queryString: string) {
     const { filter, projection, sort, population } = aqp(queryString);
 
+
     if (filter.arrival) {
       // Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
       filter.arrival = String(filter.arrival).replace(/^\/|\/i$/g, '');
@@ -174,6 +175,9 @@ export class AccommodationService {
     // Tính offset và giới hạn mặc định
     const offset = (currentPage - 1) * limit;
     const defaultLimit = limit ? limit : 10;
+
+    console.log('filter', filter);
+
 
     const DashboardFilter = [
       { $match: filter }, // Áp dụng các điều kiện tìm kiếm từ biến filter

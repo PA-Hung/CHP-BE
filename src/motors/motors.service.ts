@@ -6,7 +6,6 @@ import { Motor, MotorDocument } from './schemas/motor.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
-import { Booking, BookingDocument } from 'src/bookings/schemas/booking.schema';
 import mongoose from 'mongoose';
 
 @Injectable()
@@ -15,8 +14,6 @@ export class MotorsService {
   constructor(
     @InjectModel(Motor.name)
     private motorModel: SoftDeleteModel<MotorDocument>,
-    @InjectModel(Booking.name)
-    private bookingModel: SoftDeleteModel<BookingDocument>,
   ) { }
 
   async create(createMotorDto: CreateMotorDto, userInfo: IUser) {
@@ -70,8 +67,20 @@ export class MotorsService {
     return `This action returns a #${id} motor`;
   }
 
-  update(id: number, updateMotorDto: UpdateMotorDto) {
-    return `This action updates a #${id} motor`;
+  async update(updateMotorDto: UpdateMotorDto, userInfo: IUser) {
+    console.log('updateMotorDto', updateMotorDto);
+
+    const updated = await this.motorModel.updateOne(
+      { _id: updateMotorDto._id },
+      {
+        ...updateMotorDto,
+        updatedBy: {
+          _id: userInfo._id,
+          phone: userInfo.phone
+        }
+      }
+    );
+    return updated
   }
 
   async remove(id: string) {

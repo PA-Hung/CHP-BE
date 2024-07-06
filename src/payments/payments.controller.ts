@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
@@ -15,8 +15,12 @@ export class PaymentsController {
   }
 
   @Get()
-  findAll() {
-    return this.paymentsService.findAll();
+  findAll(
+    @Query('current') currentPage: string,
+    @Query('pageSize') limit: string,
+    @Query() queryString: string
+  ) {
+    return this.paymentsService.findAll(+currentPage, +limit, queryString);
   }
 
   @Get(':id')

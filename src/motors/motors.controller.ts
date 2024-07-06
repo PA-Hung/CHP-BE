@@ -28,9 +28,9 @@ export class MotorsController {
     return this.motorsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMotorDto: UpdateMotorDto) {
-    return this.motorsService.update(+id, updateMotorDto);
+  @Patch()
+  update(@Body() updateMotorDto: UpdateMotorDto, @ReqUser() userInfo: IUser) {
+    return this.motorsService.update(updateMotorDto, userInfo);
   }
 
   @Delete(':id')
