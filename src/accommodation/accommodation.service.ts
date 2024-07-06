@@ -6,7 +6,7 @@ import { Accommodation, AccommodationDocument } from './schemas/accommodation.sc
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
-import mongoose, { Types } from 'mongoose';
+import mongoose, { PipelineStage, Types } from 'mongoose';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -145,7 +145,6 @@ export class AccommodationService {
   async dashboard(currentPage: number, limit: number, queryString: string) {
     const { filter, projection, sort, population } = aqp(queryString);
 
-
     if (filter.arrival) {
       // Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
       filter.arrival = String(filter.arrival).replace(/^\/|\/i$/g, '');
@@ -176,30 +175,38 @@ export class AccommodationService {
     const offset = (currentPage - 1) * limit;
     const defaultLimit = limit ? limit : 10;
 
-    console.log('filter', filter);
-
-
-    const DashboardFilter = [
-      { $match: filter }, // Áp dụng các điều kiện tìm kiếm từ biến filter
-      { $group: { _id: "$apartment", count: { $sum: 1 } } },
-      { $sort: <any>{ count: 1 } }, // Sắp xếp theo số lượng tăng dần
-      { $skip: offset }, // Phân trang: Bỏ qua các bản ghi trên trang hiện tại
-      { $limit: defaultLimit }, // Phân trang: Giới hạn số bản ghi trên mỗi trang
+    // Định nghĩa pipeline aggregation
+    const aggregationPipeline: PipelineStage[] = [
+      { $match: filter },
+      {
+        $group: {
+          _id: "$apartment",
+          count: { $sum: 1 }, // Đếm số lượng phần tử trong mỗi nhóm
+        },
+      },
       {
         $lookup: {
-          from: "apartments", // Tên của bảng chứa thông tin apartment
-          localField: "_id", // Trường trong collection hiện tại tương ứng với _id
-          foreignField: "_id", // Trường trong bảng apartment tương ứng với _id
-          as: "apartmentInfo" // Tên của trường chứa thông tin apartment sau khi được join
-        }
+          from: "apartments", // Tên collection của Apartment
+          localField: "_id",
+          foreignField: "_id",
+          as: "apartmentInfo",
+        },
       },
-      { $unwind: "$apartmentInfo" }, // Mở rộng mảng apartmentInfo thành các bản ghi riêng lẻ
-      { $project: { _id: 1, code: "$apartmentInfo.code", count: 1 } } // Tái cấu trúc các trường
+      { $unwind: "$apartmentInfo" }, // Giải nén mảng apartmentInfo
+      {
+        $project: {
+          _id: 1,
+          count: 1,
+          code: "$apartmentInfo.code", // Lấy tên của apartment từ apartmentInfo
+        },
+      },
     ];
+    if (projection) {
+      aggregationPipeline.push({ $project: projection } as any);
+    }
 
-    const result = await this.accommodationModel.aggregate(DashboardFilter);
+    const result = await this.accommodationModel.aggregate(aggregationPipeline).exec();;
     const totalItems = result ? result.length : 0;
-
     // Tính tổng số trang
     const totalPages = Math.ceil(totalItems / defaultLimit);
 
@@ -213,7 +220,6 @@ export class AccommodationService {
       result //kết quả query
     };
   }
-
 
   findOne(id: number) {
     return `This action returns a #${id} accommodation`;

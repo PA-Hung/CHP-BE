@@ -23,6 +23,15 @@ export class PaymentsController {
     return this.paymentsService.findAll(+currentPage, +limit, queryString);
   }
 
+  @Get('sales')
+  findAllSales(
+    @Query('current') currentPage: string,
+    @Query('pageSize') limit: string,
+    @Query() queryString: string
+  ) {
+    return this.paymentsService.findAllSales(+currentPage, +limit, queryString);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.paymentsService.findOne(+id);
