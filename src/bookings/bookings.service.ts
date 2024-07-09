@@ -73,12 +73,27 @@ export class BookingsService {
   }
 
   async update(updateBookingDto: UpdateBookingDto, userInfo: IUser) {
-    if (updateBookingDto.status === "Hợp đồng mở") {
+    if (updateBookingDto.contract_status === "Hợp đồng mở") {
 
-      // Lấy ra danh sách các _id của motors trong booking
-      const motorIds = updateBookingDto.motors.map(motor => motor._id);
+      // Lấy ra danh sách các _id của motors trong updateBookingDto
+      const motorIds = updateBookingDto.motors.map(motor => motor._id.toString());
 
-      // Cập nhật trạng thái rental_status của các motor về false
+      // Tìm booking có updateBookingDto._id
+      const booking = await this.bookingModel.findById(updateBookingDto._id);
+
+      // Trích xuất danh sách _id của motors từ kết quả trả về
+      const motorIdsInBooking = booking.motors.map(motor => motor._id.toString());
+
+      // Lọc ra các _id có trong motorIdsInBooking mà không có trong updateBookingDto
+      const motorIdsNotInBooking = motorIdsInBooking.filter(motorId => !motorIds.includes(motorId));
+
+      // Cập nhật trạng thái rental_status của các motor ko có trong list về false
+      await this.motorModel.updateMany(
+        { _id: { $in: motorIdsNotInBooking } },
+        { $set: { rental_status: false } }
+      );
+
+      // Cập nhật trạng thái rental_status của các motor có trong list về true
       await this.motorModel.updateMany(
         { _id: { $in: motorIds } },
         { $set: { rental_status: true } }
@@ -97,7 +112,8 @@ export class BookingsService {
       );
       return updated
     }
-    if (updateBookingDto.status === "Hợp đồng đóng") {
+
+    if (updateBookingDto.contract_status === "Hợp đồng đóng") {
 
       // Lấy ra danh sách các _id của motors trong booking
       const motorIds = updateBookingDto.motors.map(motor => motor._id);

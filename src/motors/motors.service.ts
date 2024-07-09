@@ -68,8 +68,6 @@ export class MotorsService {
   }
 
   async update(updateMotorDto: UpdateMotorDto, userInfo: IUser) {
-    console.log('updateMotorDto', updateMotorDto);
-
     const updated = await this.motorModel.updateOne(
       { _id: updateMotorDto._id },
       {

@@ -44,7 +44,9 @@ export class CreateBookingDto {
     deposit: Number
 
     @IsNotEmpty()
-    status: String
+    contract_status: String
+
+    contract_type: string
     @IsNotEmpty()
     remaining_amount: Number
     @IsNotEmpty()

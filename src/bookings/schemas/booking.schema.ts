@@ -48,7 +48,10 @@ export class Booking {
     deposit: Number
 
     @Prop()
-    status: String
+    contract_status: String
+
+    @Prop()
+    contract_type: string
 
     @Prop()
     remaining_amount: Number

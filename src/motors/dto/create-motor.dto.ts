@@ -13,6 +13,7 @@ export class CreateMotorDto {
     priceD: Number
     @IsNotEmpty()
     priceH: Number
-
+    @IsNotEmpty()
+    overtime: Number
     note: string
 }
