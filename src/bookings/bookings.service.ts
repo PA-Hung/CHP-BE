@@ -8,6 +8,7 @@ import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
 import { Motor, MotorDocument } from 'src/motors/schemas/motor.schema';
+import { Payment, PaymentDocument } from 'src/payments/schemas/payment.schema';
 
 @Injectable()
 export class BookingsService {
@@ -17,6 +18,8 @@ export class BookingsService {
     private bookingModel: SoftDeleteModel<BookingDocument>,
     @InjectModel(Motor.name)
     private motorModel: SoftDeleteModel<MotorDocument>,
+    @InjectModel(Payment.name)
+    private paymentModel: SoftDeleteModel<PaymentDocument>,
   ) { }
 
   async create(createBookingDto: CreateBookingDto, userInfo: IUser) {
@@ -157,6 +160,10 @@ export class BookingsService {
       { _id: { $in: motorIds } },
       { $set: { rental_status: false } }
     );
+
+    if (booking.contract_status === "Hợp đồng đóng") {
+      await this.paymentModel.deleteOne({ booking_id: id })
+    }
 
     return this.bookingModel.deleteOne({ _id: id })
   }

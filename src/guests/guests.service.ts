@@ -6,6 +6,8 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { IUser } from 'src/users/users.interface';
 import aqp from 'api-query-params';
+import mongoose from 'mongoose';
+import { Booking, BookingDocument } from 'src/bookings/schemas/booking.schema';
 
 @Injectable()
 export class GuestsService {
@@ -13,6 +15,8 @@ export class GuestsService {
   constructor(
     @InjectModel(Guest.name)
     private guestModel: SoftDeleteModel<GuestDocument>,
+    @InjectModel(Booking.name)
+    private bookingModel: SoftDeleteModel<BookingDocument>,
   ) { }
 
   async create(createGuestDto: CreateGuestDto, userInfo: IUser) {
@@ -61,11 +65,30 @@ export class GuestsService {
     return `This action returns a #${id} guest`;
   }
 
-  update(id: number, updateGuestDto: UpdateGuestDto) {
-    return `This action updates a #${id} guest`;
+  async update(updateGuestDto: UpdateGuestDto, userInfo: IUser) {
+    const updated = await this.guestModel.updateOne(
+      { _id: updateGuestDto._id },
+      {
+        ...updateGuestDto,
+        updatedBy: {
+          _id: userInfo._id,
+          phone: userInfo.phone
+        }
+      }
+    );
+    return updated
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} guest`;
+  async remove(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return "Khách hàng không tồn tại !"
+    }
+
+    const existingRental = await this.bookingModel.find({ guest_id: id })
+    if (existingRental.length !== 0) {
+      throw new BadRequestException(`Khách hàng đã có hợp đồng thuê xe !`);
+    }
+
+    return this.guestModel.deleteOne({ _id: id })
   }
 }

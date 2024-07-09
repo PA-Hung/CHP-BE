@@ -28,13 +28,13 @@ export class GuestsController {
     return this.guestsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGuestDto: UpdateGuestDto) {
-    return this.guestsService.update(+id, updateGuestDto);
+  @Patch()
+  update(@Body() updateGuestDto: UpdateGuestDto, @ReqUser() userInfo: IUser) {
+    return this.guestsService.update(updateGuestDto, userInfo);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.guestsService.remove(+id);
+    return this.guestsService.remove(id);
   }
 }

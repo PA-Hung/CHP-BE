@@ -5,7 +5,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Payment, PaymentDocument } from './schemas/payment.schema';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { IUser } from 'src/users/users.interface';
-import { Booking, BookingDocument } from 'src/bookings/schemas/booking.schema';
 import aqp from 'api-query-params';
 import { PipelineStage } from 'mongoose';
 import dayjs from 'dayjs';
@@ -16,8 +15,6 @@ export class PaymentsService {
   constructor(
     @InjectModel(Payment.name)
     private paymentModel: SoftDeleteModel<PaymentDocument>,
-    @InjectModel(Booking.name)
-    private bookingModel: SoftDeleteModel<BookingDocument>,
   ) { }
 
   async create(createPaymentDto: CreatePaymentDto, userInfo: IUser) {
