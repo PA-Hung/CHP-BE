@@ -20,6 +20,8 @@ export class CreatePaymentDto {
     @IsNotEmpty()
     paid: Number
     @IsNotEmpty()
+    contract_type: string
+    @IsNotEmpty()
     payment_method: string
     @IsNotEmpty()
     payment_date: Date

@@ -30,6 +30,8 @@ export class Payment {
     @Prop()
     payment_method: string
     @Prop()
+    contract_type: string
+    @Prop()
     payment_date: Date
 
     @Prop({ type: Object })

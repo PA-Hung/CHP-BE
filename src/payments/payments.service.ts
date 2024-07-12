@@ -28,33 +28,33 @@ export class PaymentsService {
     return resData
   }
 
-  async findAll1(currentPage: number, limit: number, queryString: string) {
-    const { filter, projection, sort, population } = aqp(queryString);
-    delete filter.current
-    delete filter.pageSize
-    let offset = (+currentPage - 1) * (+limit);
-    let defaultLimit = +limit ? +limit : 10;
-    const totalItems = (await this.paymentModel.find(filter)).length;
-    const totalPages = Math.ceil(totalItems / defaultLimit);
+  // async findAll1(currentPage: number, limit: number, queryString: string) {
+  //   const { filter, projection, sort, population } = aqp(queryString);
+  //   delete filter.current
+  //   delete filter.pageSize
+  //   let offset = (+currentPage - 1) * (+limit);
+  //   let defaultLimit = +limit ? +limit : 10;
+  //   const totalItems = (await this.paymentModel.find(filter)).length;
+  //   const totalPages = Math.ceil(totalItems / defaultLimit);
 
-    const bookings = await this.paymentModel.find(filter)
-      .skip(offset)
-      .limit(defaultLimit)
-      .sort(sort as any)
-      .populate({ path: "guest_id", select: { _id: 1, name: 1, phone: 1, cccd: 1 }, })
-      .select(projection as any)
-      .exec();
+  //   const bookings = await this.paymentModel.find(filter)
+  //     .skip(offset)
+  //     .limit(defaultLimit)
+  //     .sort(sort as any)
+  //     .populate({ path: "guest_id", select: { _id: 1, name: 1, phone: 1, cccd: 1 }, })
+  //     .select(projection as any)
+  //     .exec();
 
-    return {
-      meta: {
-        current: currentPage, //trang hiện tại
-        pageSize: limit, //số lượng bản ghi đã lấy
-        pages: totalPages, //tổng số trang với điều kiện query
-        total: totalItems // tổng số phần tử (số bản ghi)
-      },
-      result: bookings //kết quả query
-    }
-  }
+  //   return {
+  //     meta: {
+  //       current: currentPage, //trang hiện tại
+  //       pageSize: limit, //số lượng bản ghi đã lấy
+  //       pages: totalPages, //tổng số trang với điều kiện query
+  //       total: totalItems // tổng số phần tử (số bản ghi)
+  //     },
+  //     result: bookings //kết quả query
+  //   }
+  // }
 
   async findAll(currentPage: number, limit: number, queryString: string) {
     const { filter, projection, sort, population } = aqp(queryString);
@@ -98,6 +98,20 @@ export class PaymentsService {
     // Sử dụng aggregation để nhóm theo payment_date
     const aggregationPipeline: PipelineStage[] = [
       { $match: filter },
+      {
+        $lookup: {
+          from: 'guests', // Tên của collection khác bạn muốn join
+          localField: 'guest_id', // Trường trong collection hiện tại (paymentModel) dùng để join
+          foreignField: '_id', // Trường trong collection 'guests' dùng để join với localField
+          as: 'guest' // Tên của mảng kết quả sau khi join (có thể đặt là bất cứ cái gì)
+        }
+      },
+      {
+        $unwind: {
+          path: '$guest', // Chuyển đổi mảng 'guest' thành đối tượng
+          preserveNullAndEmptyArrays: true // Nếu không tìm thấy 'guest', vẫn giữ document gốc
+        }
+      },
       {
         $addFields: {
           totalPaidAndDeposit: { $sum: ["$paid", "$deposit"] }
@@ -179,6 +193,20 @@ export class PaymentsService {
     // Sử dụng aggregation để nhóm theo payment_date
     const aggregationPipeline: PipelineStage[] = [
       { $match: filter },
+      {
+        $lookup: {
+          from: 'guests', // Tên của collection khác bạn muốn join
+          localField: 'guest_id', // Trường trong collection hiện tại (paymentModel) dùng để join
+          foreignField: '_id', // Trường trong collection 'guests' dùng để join với localField
+          as: 'guest' // Tên của mảng kết quả sau khi join (có thể đặt là bất cứ cái gì)
+        }
+      },
+      {
+        $unwind: {
+          path: '$guest', // Chuyển đổi mảng 'guest' thành đối tượng
+          preserveNullAndEmptyArrays: true // Nếu không tìm thấy 'guest', vẫn giữ document gốc
+        }
+      },
       {
         $addFields: {
           totalPaidAndDeposit: { $sum: ["$paid", "$deposit"] }
