@@ -76,6 +76,7 @@ export class BookingsService {
   }
 
   async update(updateBookingDto: UpdateBookingDto, userInfo: IUser) {
+
     if (updateBookingDto.contract_status === "Hợp đồng mở") {
 
       // Lấy ra danh sách các _id của motors trong updateBookingDto

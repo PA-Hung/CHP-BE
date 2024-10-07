@@ -28,6 +28,7 @@ export class CreateBookingDto {
         start_date: Date,
         end_date: Date,
         amount: Number,
+        late_time: Date,
         late_fee_amount: Number,
         updatedAt: Date,
         updatedBy: {
