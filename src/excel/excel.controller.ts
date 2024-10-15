@@ -24,12 +24,12 @@ export class ExcelController {
     @Query('pageSize') limit: string,
     @Query() queryString: string,
     @ReqUser() userInfo: IUser) {
-    return this.excelService.exportExcel(+currentPage, +limit, queryString, userInfo);
+    return this.excelService.exportExcel(+currentPage, +limit, queryString);
   }
 
-  @Get()
-  findAll() {
-    return this.excelService.findAll();
+  @Get('export-report')
+  findAll(@Query() queryString: string) {
+    return this.excelService.findAll(queryString);
   }
 
   @Get(':id')

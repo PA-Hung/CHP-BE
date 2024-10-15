@@ -100,7 +100,7 @@ export class ExcelService {
     }
   }
 
-  async exportExcel(currentPage: number, limit: number, queryString: string, userInfo: IUser) {
+  async exportExcel(currentPage: number, limit: number, queryString: string) {
     try {
 
       const { filter, projection, sort, population } = aqp(queryString);
@@ -189,8 +189,48 @@ export class ExcelService {
     return 'This action adds a new excel';
   }
 
-  findAll() {
-    return `This action returns all excel`;
+  async findAll(queryString: string) {
+    const { filter, sort } = aqp(queryString);
+
+    console.log('filter', filter);
+    if (filter.arrival) {
+      // Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
+      filter.arrival = String(filter.arrival).replace(/^\/|\/i$/g, '');
+      // Chuyển đổi thành một đối tượng ngày tháng nếu giá trị là một chuỗi ngày tháng hợp lệ
+      if (dayjs(filter.arrival).isValid()) {
+        // Tạo điều kiện tìm kiếm
+        filter.arrival = {
+          $gte: dayjs(filter.arrival).startOf('day').add(14, 'hours').toDate(), // Lớn hơn hoặc bằng 14 giờ
+        };
+      }
+    }
+
+    if (filter.departure) {
+      // Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
+      filter.departure = String(filter.departure).replace(/^\/|\/i$/g, '');
+      // Chuyển đổi thành một đối tượng ngày tháng nếu giá trị là một chuỗi ngày tháng hợp lệ
+      if (dayjs(filter.departure).isValid()) {
+        // Tạo điều kiện tìm kiếm
+        filter.departure = {
+          $lte: dayjs(filter.departure).endOf('day').add(12, 'hours').toDate() // Nhỏ hơn hoặc bằng 12 giờ
+        };
+      }
+    }
+
+    console.log('filter', filter);
+
+    try {
+      const result = await this.AccommodationModel.find(filter)
+        .sort(sort as any)
+        .populate({ path: "apartment", select: { _id: 1, code: 1 } })
+        .select('')
+        .exec();
+
+      return result; //Assuming you have a filename set in the response object
+
+    } catch (error) {
+      return { success: false, error: 'Error exporting Excel file', details: error.message };
+    }
   }
 
   findOne(id: number) {

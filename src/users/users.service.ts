@@ -119,9 +119,26 @@ export class UsersService {
   }
 
   async update(updateUserData: UpdateUserDto, user: IUser) {
+    console.log('updateUserData', updateUserData);
+
     const existingApartment = await this.userModel.findOne({ apartments: { $in: updateUserData.apartments }, _id: { $ne: updateUserData._id } }).exec();
     if (existingApartment) {
       throw new BadRequestException('Mã căn hộ đã được quản lý bởi người dùng khác.');
+    }
+    if (updateUserData.password) {
+      const hassPassword = this.hassPassword(updateUserData.password)
+      const updated = await this.userModel.updateOne(
+        { _id: updateUserData._id },
+        {
+          ...updateUserData,
+          password: hassPassword,
+          updatedBy: {
+            _id: user._id,
+            phone: user.phone
+          }
+        }
+      );
+      return updated
     }
     const updated = await this.userModel.updateOne(
       { _id: updateUserData._id },

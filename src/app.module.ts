@@ -17,6 +17,7 @@ import { MotorsModule } from './motors/motors.module';
 import { GuestsModule } from './guests/guests.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { PaymentsModule } from './payments/payments.module';
+import { Schema } from 'mongoose';
 
 
 @Module({
@@ -28,7 +29,7 @@ import { PaymentsModule } from './payments/payments.module';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         uri: configService.get<string>('MONGO_URL'),
-        connectionFactory: (connection) => {
+        connectionFactory: (connection: { plugin: (arg0: (schema: Schema) => void) => void; }) => {
           connection.plugin(softDeletePlugin);
           return connection;
         }

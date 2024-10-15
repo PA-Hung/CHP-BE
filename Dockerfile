@@ -2,10 +2,12 @@
 FROM node:16-alpine
 
 # Create app directory
-WORKDIR /chp/backend-nest
+WORKDIR /backend-nest
 
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 COPY package*.json ./
+COPY dist ./dist
+COPY .env ./
 
 # Install app dependencies
 RUN npm install
@@ -13,10 +15,10 @@ RUN npm install
 RUN npm i -g @nestjs/cli@10.0.3
 
 # Bundle app source
-COPY . .
+# COPY . .
 
 # Creates a "dist" folder with the production build
-RUN npm run build
+# RUN npm run build
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]
