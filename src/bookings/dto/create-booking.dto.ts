@@ -43,6 +43,8 @@ export class CreateBookingDto {
     discount: Number
     @IsNotEmpty()
     deposit: Number
+    @IsNotEmpty()
+    surcharge: Number
 
     @IsNotEmpty()
     contract_status: String

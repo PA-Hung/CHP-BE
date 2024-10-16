@@ -28,34 +28,6 @@ export class PaymentsService {
     return resData
   }
 
-  // async findAll1(currentPage: number, limit: number, queryString: string) {
-  //   const { filter, projection, sort, population } = aqp(queryString);
-  //   delete filter.current
-  //   delete filter.pageSize
-  //   let offset = (+currentPage - 1) * (+limit);
-  //   let defaultLimit = +limit ? +limit : 10;
-  //   const totalItems = (await this.paymentModel.find(filter)).length;
-  //   const totalPages = Math.ceil(totalItems / defaultLimit);
-
-  //   const bookings = await this.paymentModel.find(filter)
-  //     .skip(offset)
-  //     .limit(defaultLimit)
-  //     .sort(sort as any)
-  //     .populate({ path: "guest_id", select: { _id: 1, name: 1, phone: 1, cccd: 1 }, })
-  //     .select(projection as any)
-  //     .exec();
-
-  //   return {
-  //     meta: {
-  //       current: currentPage, //trang hiện tại
-  //       pageSize: limit, //số lượng bản ghi đã lấy
-  //       pages: totalPages, //tổng số trang với điều kiện query
-  //       total: totalItems // tổng số phần tử (số bản ghi)
-  //     },
-  //     result: bookings //kết quả query
-  //   }
-  // }
-
   async findAll(currentPage: number, limit: number, queryString: string) {
     const { filter, projection, sort, population } = aqp(queryString);
     delete filter.current;

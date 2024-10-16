@@ -10,11 +10,11 @@ export class CreatePaymentDto {
     user_id: mongoose.Schema.Types.ObjectId;
 
     commission: Number
-
     discount: Number
-
     deposit: Number
+    surcharge: Number
     late_fee_amount: Number
+
     @IsNotEmpty()
     amount: Number
     @IsNotEmpty()

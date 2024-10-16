@@ -49,7 +49,7 @@ export class PermissionsService {
     const result = await this.permissionModel.find(filter)
       .skip(offset)
       .limit(defaultLimit)
-      .sort({ createdAt: 1, module: 1 })
+      .sort({ createdAt: -1, module: 1 })
       .populate(population)
       .select(projection as any)
       .exec();

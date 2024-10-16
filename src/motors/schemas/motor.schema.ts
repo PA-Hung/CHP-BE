@@ -17,8 +17,6 @@ export class Motor {
     @Prop()
     priceD: Number
     @Prop()
-    priceH: Number
-    @Prop()
     overtime: Number
     @Prop()
     note: string

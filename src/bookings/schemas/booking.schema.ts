@@ -47,6 +47,8 @@ export class Booking {
     discount: Number
     @Prop()
     deposit: Number
+    @Prop()
+    surcharge: Number
 
     @Prop()
     contract_status: String

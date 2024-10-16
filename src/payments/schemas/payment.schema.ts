@@ -22,6 +22,8 @@ export class Payment {
     @Prop()
     deposit: Number
     @Prop()
+    surcharge: Number
+    @Prop()
     amount: Number
     @Prop()
     late_fee_amount: Number
