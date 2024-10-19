@@ -34,7 +34,6 @@ export class MotorsService {
 
 
   async findAll(currentPage: number, limit: number, queryString: string) {
-
     const { filter, projection, sort, population } = aqp(queryString);
     delete filter.current
     delete filter.pageSize

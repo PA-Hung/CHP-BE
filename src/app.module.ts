@@ -18,6 +18,7 @@ import { GuestsModule } from './guests/guests.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { PaymentsModule } from './payments/payments.module';
 import { Schema } from 'mongoose';
+import { MaintenancesModule } from './maintenances/maintenances.module';
 
 
 @Module({
@@ -49,6 +50,7 @@ import { Schema } from 'mongoose';
     GuestsModule,
     BookingsModule,
     PaymentsModule,
+    MaintenancesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

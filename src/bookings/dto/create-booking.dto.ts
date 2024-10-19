@@ -16,6 +16,7 @@ export class CreateBookingDto {
     @IsNotEmpty()
     @IsMongoId()
     user_id: mongoose.Schema.Types.ObjectId;
+
     @IsNotEmpty()
     commission: Number
 
