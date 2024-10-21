@@ -32,8 +32,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         if (err || !user) {
             throw err || new UnauthorizedException('Token không hợp lệ !');
         }
-        //console.log('request', user);
-
         // check role xem có quyền Admin hay không 
         // const checkRole = user.role
         // if (checkRole !== "ADMIN") {

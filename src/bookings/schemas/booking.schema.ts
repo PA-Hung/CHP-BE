@@ -25,7 +25,7 @@ export class Booking {
 
     @Prop({ type: mongoose.Schema.Types.Array })
     motors: {
-        _id: string,
+        _id: { type: String, required: true },
         license: string,
         brand: string,
         status: string,

@@ -98,12 +98,7 @@ export class PaymentsService {
           totalPaid: { $sum: "$totalPaidAndDeposit" }, // Tính tổng paid từ mảng payments
           count: { $sum: 1 }
         }
-      },
-      {
-        $sort: {
-          payment_date: -1 // Example: Sort by payment_date in descending order
-        }
-      },
+      }
     ];
 
     if (projection) {

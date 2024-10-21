@@ -98,7 +98,6 @@ export class UsersService {
     }
   }
 
-
   findOne(id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return "User not found !"
@@ -119,8 +118,6 @@ export class UsersService {
   }
 
   async update(updateUserData: UpdateUserDto, user: IUser) {
-    console.log('updateUserData', updateUserData);
-
     const existingApartment = await this.userModel.findOne({ apartments: { $in: updateUserData.apartments }, _id: { $ne: updateUserData._id } }).exec();
     if (existingApartment) {
       throw new BadRequestException('Mã căn hộ đã được quản lý bởi người dùng khác.');

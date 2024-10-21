@@ -59,13 +59,19 @@ export class BookingsService {
       .populate({ path: "guest_id", select: { _id: 1, name: 1, phone: 1, cccd: 1 }, })
       .select(projection as any)
       .exec();
+    const countBookings = await this.bookingModel.count(filter)
+      .sort(sort as any)
+      .populate({ path: "guest_id", select: { _id: 1, name: 1, phone: 1, cccd: 1 }, })
+      .select(projection as any)
+      .exec();
 
     return {
       meta: {
         current: currentPage, //trang hiện tại
         pageSize: limit, //số lượng bản ghi đã lấy
         pages: totalPages, //tổng số trang với điều kiện query
-        total: totalItems // tổng số phần tử (số bản ghi)
+        total: totalItems, // tổng số phần tử (số bản ghi)
+        allItem: countBookings
       },
       result: bookings //kết quả query
     }

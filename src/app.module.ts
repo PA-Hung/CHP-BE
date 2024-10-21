@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Schema } from 'mongoose';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
@@ -17,7 +18,6 @@ import { MotorsModule } from './motors/motors.module';
 import { GuestsModule } from './guests/guests.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { PaymentsModule } from './payments/payments.module';
-import { Schema } from 'mongoose';
 import { MaintenancesModule } from './maintenances/maintenances.module';
 
 

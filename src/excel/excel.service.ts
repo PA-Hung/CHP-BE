@@ -107,7 +107,6 @@ export class ExcelService {
 
       // Kiểm tra xem có trường userId trong filter không
       if (filter.userId) {
-        //console.log('filter.userId', filter.userId);
 
         //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
         filter.userId = String(filter.userId).replace(/^\/|\/i$/g, '');
@@ -120,7 +119,6 @@ export class ExcelService {
 
       // Kiểm tra xem có trường apartment trong filter không
       if (filter.apartment) {
-        //console.log('filter.userId', filter.userId);
 
         //Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
         filter.apartment = String(filter.apartment).replace(/^\/|\/i$/g, '');
@@ -192,7 +190,6 @@ export class ExcelService {
   async findAll(queryString: string) {
     const { filter, sort } = aqp(queryString);
 
-    console.log('filter', filter);
     if (filter.arrival) {
       // Chuyển nó thành String và Xoá bỏ / ở đầu và /i ở cuối (nếu có)
       filter.arrival = String(filter.arrival).replace(/^\/|\/i$/g, '');
@@ -216,8 +213,6 @@ export class ExcelService {
         };
       }
     }
-
-    console.log('filter', filter);
 
     try {
       const result = await this.AccommodationModel.find(filter)
